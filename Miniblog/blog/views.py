@@ -4,10 +4,14 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,logout,login
 from .models import Post
 from django.contrib.auth.models import Group
+from django.core.paginator import Paginator
 # Create your views here.
 def home(request):
-    posts = Post.objects.all()
-    return render(request,'blog/home.html',{'posts':posts})
+    posts = Post.objects.all().order_by('id')
+    paginator = Paginator(posts, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request,'blog/home.html',{'page_obj':page_obj})
 
 def about(request):
     return render(request,'blog/about.html')
